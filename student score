@@ -1,0 +1,60 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df=pd.read_csv("student_scores.csv")
+print(df.head())
+df.describe()
+df.info()
+df.isnull().sum()
+
+# Drop unnamed column
+df=df.drop("Unnamed: 0", axis=1)
+print(df.head())
+df.head(5)
+
+#Change weekly study hours column
+df["WklyStudyHours"]=df["WklyStudyHours"].str.replace("05-Oct","5-10")
+df.head(10)
+
+#Gender distribution
+plt.figure(figsize=(5,5))
+ax=sns.countplot(data=df,x="Gender",color="lightgreen")
+ax.bar_label(ax.containers[0]) # this line helps us to see the number above the bars
+plt.title('Gender distribution')
+plt.show
+
+gb=df.groupby("ParentEduc").agg({"MathScore":'mean',"ReadingScore":"mean","WritingScore":'mean'})
+print(gb)
+plt.figure(figsize=(4,3))
+sns.heatmap(gb,annot=True) #annot use for numbers/score in the boxs 
+plt.title('parents education on students score')
+plt.show
+gb1=df.groupby("ParentMaritalStatus").agg({"MathScore":'mean',"ReadingScore":"mean","WritingScore":'mean'})
+print(gb1)
+plt.figure(figsize=(4,3))
+sns.heatmap(gb1,annot=True) #annot use for numbers/score in the boxs 
+plt.title('parents marital status on student score')
+plt.show
+sns.boxplot(data=df,x='MathScore',color='violet')
+plt.show()
+sns.boxplot(data=df,x='ReadingScore',color='skyblue')
+plt.show()
+sns.boxplot(data=df, x='WritingScore',color='red' )
+plt.show()
+print(df["EthnicGroup"].unique())
+groupA=df.loc[df['EthnicGroup']=="group A"].count()
+groupB=df.loc[df['EthnicGroup']=="group B"].count()
+groupC=df.loc[df['EthnicGroup']=="group C"].count()
+groupD=df.loc[df['EthnicGroup']=="group D"].count()
+groupE=df.loc[df['EthnicGroup']=="group E"].count()
+
+L=["group A", "group B", "group C", "group D", "group E"]
+mlist=[groupA["EthnicGroup"], groupB["EthnicGroup"], groupC["EthnicGroup"], groupD["EthnicGroup"], groupE["EthnicGroup"]]
+
+
+explode = [0,0,0.1,0,0] 
+plt.pie(mlist, labels = L,autopct='%1.2f%%',explode=explode,shadow=True,)
+plt.title('Distribution of ethnic groups')
+plt.show()
